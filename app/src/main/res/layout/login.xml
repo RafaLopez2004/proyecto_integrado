@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_height="match_parent"
+    android:layout_width="match_parent"
+    android:background="@drawable/background"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+    
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/enroll"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:backgroundTint="@color/design_default_color_secondary"
+        android:gravity="center"
+        android:text="@string/enroll_text"/>
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/inbtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="10dp"
+        android:layout_marginStart="5dp"
+        android:layout_marginEnd="5dp"
+        android:backgroundTint="@color/design_default_color_secondary"
+        android:text="@string/checkIn_text"
+        android:layout_above="@id/enroll"
+        android:layout_toLeftOf="@id/center" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/outbtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="10dp"
+        android:layout_marginStart="05dp"
+        android:layout_marginEnd="5dp"
+        android:backgroundTint="@color/design_default_color_secondary"
+        android:text="@string/checkOut_text"
+        android:layout_toRightOf="@id/center"
+        android:layout_above="@id/enroll" />
+
+    <TextView
+        android:id="@+id/center"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="TextView"
+        android:visibility="invisible"
+        android:layout_above="@id/enroll"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:layout_marginBottom="10dp"
+        />
+</RelativeLayout>

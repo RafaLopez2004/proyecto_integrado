@@ -1,0 +1,14 @@
+<resources>
+    <string name="app_name">prueba</string>
+    <string name="checkIn_text">Check-in</string>
+    <string name="checkOut_text">Check-out</string>
+    <string name="enroll_text">Enroll</string>
+    <string name="sign_in">Sign in</string>
+    <string name="password">Password</string>
+    <string name="login">login</string>
+    <string name="forgot_password">Forgot password?</string>
+    <string name="username">Username</string>
+    <string name="invalid_credentials">Invalid credentials</string>
+    <string name="remember_password">Remember password?</string>
+
+</resources>
