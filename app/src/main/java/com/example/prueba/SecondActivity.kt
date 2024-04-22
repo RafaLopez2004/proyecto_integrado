@@ -1,8 +1,10 @@
 package com.example.prueba
 
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.widget.Button
+import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
@@ -34,6 +36,7 @@ class SecondActivity  : AppCompatActivity(){
         setContentView(R.layout.login)
         val inButton: Button = findViewById(R.id.inbtn)
         val outButton: Button = findViewById(R.id.outbtn)
+        val logOut: TextView = findViewById(R.id.logout)
 
         val context = this
         inButton.setOnClickListener {
@@ -45,7 +48,7 @@ class SecondActivity  : AppCompatActivity(){
                             Toast.makeText(context, "Check in successful",
                                 Toast.LENGTH_LONG).show()
                         0->
-                            Toast.makeText(context, "You already checked in today",
+                            Toast.makeText(context, "You already checked in",
                                 Toast.LENGTH_LONG).show()
                         -1 ->
                             Toast.makeText(context, "An error occurred while checking in",
@@ -71,6 +74,10 @@ class SecondActivity  : AppCompatActivity(){
                     }
                 }
             }
+        }
+        logOut.setOnClickListener {
+            logOut()
+            this.startActivity(Intent(this, MainActivity::class.java))
         }
     }
     /**
