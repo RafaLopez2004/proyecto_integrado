@@ -130,7 +130,7 @@ suspend fun checkOut() : Int? {
     return def.await()
 }
 /**
- * TODO Tries to send a reset email to the given email, if it was successful it will return 1,
+ * Tries to send a reset email to the given email, if it was successful it will return 1,
  * -1 if an error occurred or 0  if the email isn't registered
  */
 suspend fun forgotPass(email: String) : Int?{

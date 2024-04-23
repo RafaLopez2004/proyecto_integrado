@@ -62,7 +62,7 @@ class MainActivity : AppCompatActivity() {
         }
         forgot.setOnClickListener {
             val context = this
-            //TODO dialogue asking for the email we want to reset pass
+            //dialogue asking for the email we want to reset pass
             val builder = AlertDialog.Builder(context)
             builder.setTitle("Introduzca el email")
             val inflatedView = LayoutInflater.from(context)
