@@ -60,4 +60,6 @@ dependencies {
     androidTestImplementation(libs.androidx.espresso.core)
     //Enables use of stuff wich requires API level 25+
     coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.0.4")
+    // Import material design
+    implementation("com.google.android.material:material:1.11.0")
 }

@@ -1,6 +1,5 @@
 package com.example.prueba.firebase
 
-import android.util.Log
 import com.example.prueba.time.TimeModel
 import com.example.prueba.time.TimeService
 import com.google.android.gms.tasks.Tasks.await
@@ -29,10 +28,7 @@ fun getCurrentUser() : FirebaseUser?{
 fun logOut(){
     Firebase.auth.signOut()
 }
-/**
- * TODO Forgot password
- */
-fun forgot(){}
+
 
 // Asynchronous functions
 
@@ -133,6 +129,22 @@ suspend fun checkOut() : Int? {
     }
     return def.await()
 }
+/**
+ * TODO Tries to send a reset email to the given email, if it was successful it will return 1,
+ * -1 if an error occurred or 0  if the email isn't registered
+ */
+suspend fun forgotPass(email: String) : Int?{
+    val def = CompletableDeferred<Int?>()
+    if (!await(Firebase.firestore.collection("users")
+            .whereEqualTo("email",email)
+            .get()).isEmpty)
+        Firebase.auth.sendPasswordResetEmail(email).addOnCompleteListener {
+            def.complete(if (it.isSuccessful) 1 else -1)
+        }
+    else
+        def.complete(0)
+    return def.await()
+}
 // Utilities
 /**
  * Get the current user's document id from the database
@@ -184,5 +196,5 @@ private fun formatDate(timeModel: TimeModel) : String {
     return "${timeModel.day}-${timeModel.month}-${timeModel.year}"
 }
 private fun formatTime(timeModel: TimeModel) : String{
-    return "${timeModel.hour}:${timeModel.minute}"
+    return "${timeModel.hour}:${timeModel.minute}:${timeModel.second}"
 }
