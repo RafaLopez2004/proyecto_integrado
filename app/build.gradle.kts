@@ -43,6 +43,22 @@ dependencies {
     implementation("com.squareup.retrofit2:retrofit:2.11.0")
     // Importar GSON para poder leer JSON
     implementation("com.squareup.retrofit2:converter-gson:2.11.0")
+    // Location
+    implementation("com.google.android.gms:play-services-location:19.0.1")
+    //Enables use of stuff wich requires API level 25+
+    coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.0.4")
+    // Import material design
+    implementation("com.google.android.material:material:1.11.0")
+    // Allows for easier management of permisions
+    implementation("com.vmadalin:easypermissions-ktx:1.0.0")
+    // Allows the app to interact with our firebase DB
+    implementation("com.google.firebase:firebase-bom:32.8.0")
+    implementation(libs.firebase.common.ktx)
+    implementation(libs.firebase.auth.ktx)
+    implementation(libs.firebase.firestore.ktx)
+    implementation(libs.firebase.database.ktx)
+
+
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
@@ -50,16 +66,8 @@ dependencies {
     implementation(libs.androidx.activity)
     implementation(libs.androidx.constraintlayout)
     implementation("androidx.biometric:biometric-ktx:1.2.0-alpha05")
-    implementation("com.google.firebase:firebase-bom:32.8.0")
-    implementation(libs.firebase.common.ktx)
-    implementation(libs.firebase.auth.ktx)
-    implementation(libs.firebase.firestore.ktx)
-    implementation(libs.firebase.database.ktx)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
-    //Enables use of stuff wich requires API level 25+
-    coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.0.4")
-    // Import material design
-    implementation("com.google.android.material:material:1.11.0")
+
 }

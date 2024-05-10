@@ -91,7 +91,6 @@ class MainActivity : AppCompatActivity() {
                         }
                     }
                 }
-
             }
             // Button to cancel the operation
             builder.setNegativeButton("Cancel"){dialog, _ ->
