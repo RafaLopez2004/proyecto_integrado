@@ -49,27 +49,34 @@ class SecondActivity  : AppCompatActivity(){
         val inButton: Button = findViewById(R.id.inbtn)
         val outButton: Button = findViewById(R.id.outbtn)
         val logOut: TextView = findViewById(R.id.logout)
+        var operating = false
         context = this
 
         // Check in button logic
         inButton.setOnClickListener {
-            CoroutineScope(Dispatchers.IO).launch {
-                if (checkPermission())
-                    checkInLocal(context)
-                else
-                    ActivityCompat.requestPermissions(context as SecondActivity,
-                        arrayOf(Manifest.permission.ACCESS_FINE_LOCATION), LOC_CODE)
-            }
+            if (!operating){
+                operating = true
+                CoroutineScope(Dispatchers.IO).launch {
+                    if (checkPermission())
+                        checkInLocal(context)
+                    else
+                        ActivityCompat.requestPermissions(context as SecondActivity,
+                            arrayOf(Manifest.permission.ACCESS_FINE_LOCATION), LOC_CODE)
+                    operating = false
+                } }
         }
         // Check out button logic
         outButton.setOnClickListener {
+            if (!operating){
             CoroutineScope(Dispatchers.IO).launch {
+                operating = true
                 if (checkPermission())
                     checkOutLocal(context)
                 else
                     ActivityCompat.requestPermissions(context as SecondActivity,
                         arrayOf(Manifest.permission.ACCESS_FINE_LOCATION), LOC_CODE_OUT)
-            }
+                operating = false
+            } }
         }
         // LogOut button logic
         logOut.setOnClickListener {
