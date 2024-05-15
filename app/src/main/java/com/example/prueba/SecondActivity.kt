@@ -64,6 +64,8 @@ class SecondActivity  : AppCompatActivity(){
                             arrayOf(Manifest.permission.ACCESS_FINE_LOCATION), LOC_CODE)
                     operating = false
                 } }
+            else
+                Toast.makeText(context, "Espera a que termine la operación anterior", Toast.LENGTH_LONG).show()
         }
         // Check out button logic
         outButton.setOnClickListener {
@@ -77,6 +79,8 @@ class SecondActivity  : AppCompatActivity(){
                         arrayOf(Manifest.permission.ACCESS_FINE_LOCATION), LOC_CODE_OUT)
                 operating = false
             } }
+            else
+                Toast.makeText(context, "Espera a que termine la operación anterior", Toast.LENGTH_LONG).show()
         }
         // LogOut button logic
         logOut.setOnClickListener {
