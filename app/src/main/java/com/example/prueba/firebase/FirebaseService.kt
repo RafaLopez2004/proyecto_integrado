@@ -14,8 +14,6 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import kotlin.collections.HashMap
 
-var latitude = 37.71025
-var longitude = -5.09293
 
 /**
  * Returns the currently logged in user, if there isn't any user logged in,
@@ -163,10 +161,17 @@ private fun getCurrentUserDocument(): DocumentSnapshot? {
  * Checks if the given location is in range to do the check in
  */
 fun checkLocation(location : Location) : Boolean{
+    val db = Firebase.firestore
     val workplace = Location("")
-    workplace.latitude = latitude
-    workplace.longitude = longitude
-    return location.distanceTo(workplace) < 1000
+    val latitude = await(db.collection("users").document("cords").get()).getDouble("lat")
+    val longitude = await(db.collection("users").document("cords").get()).getDouble("lon")
+
+    if (longitude != null && latitude != null) {
+        workplace.longitude = longitude
+        workplace.latitude = latitude
+        return location.distanceTo(workplace) < 1000 }
+    else
+        return false
 }
 /**
  * Returns the time of the server
