@@ -7,7 +7,10 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.location.Location
 import android.os.Bundle
-import android.widget.Button
+import android.view.MenuItem
+import android.view.View
+import android.widget.ImageButton
+import android.widget.PopupMenu
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -16,6 +19,7 @@ import com.example.prueba.firebase.checkIn
 import com.example.prueba.firebase.checkLocation
 import com.example.prueba.firebase.checkOut
 import com.example.prueba.firebase.logOut
+import com.example.prueba.firebase.setCurrentUserDocument
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import kotlinx.coroutines.CoroutineScope
@@ -25,7 +29,6 @@ import kotlinx.coroutines.tasks.await
 
 class SecondActivity  : AppCompatActivity(){
 
-    private val TAG = MainActivity::getLocalClassName.toString()
     private val LOC_CODE = 1000
     private val LOC_CODE_OUT = 1001
     private var safe : Boolean = true
@@ -35,22 +38,17 @@ class SecondActivity  : AppCompatActivity(){
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        /*If the biometric services are available we continue with the program,
-        otherwise we show an alert to the user*/
-        /*if (!checkBiometricAvailable()) {
-            //Registers not verified check in
-            AlertDialog.Builder(this)
-                .setMessage("Your dispositive does not have the required hardware to do a safe check in")
-                .setPositiveButton("OK", null )
-                .show()
-            safe = false
-        }*/
-        setContentView(R.layout.login)
-        val inButton: Button = findViewById(R.id.inbtn)
-        val outButton: Button = findViewById(R.id.outbtn)
+        setContentView(R.layout.prueba)
+        val inButton: TextView = findViewById(R.id.checkin)
+        val outButton: TextView = findViewById(R.id.checkout)
+        val menu: ImageButton = findViewById(R.id.superior_menu)
         val logOut: TextView = findViewById(R.id.logout)
         var operating = false
         context = this
+
+        CoroutineScope(Dispatchers.IO).launch {
+            setCurrentUserDocument()
+        }
 
         // Check in button logic
         inButton.setOnClickListener {
@@ -80,63 +78,12 @@ class SecondActivity  : AppCompatActivity(){
                 operating = false
             } }
             else
-                Toast.makeText(context, "Espera a que termine la operación anterior", Toast.LENGTH_LONG).show()
+                Toast.makeText(context, "Wait until the previous operation is completed", Toast.LENGTH_LONG).show()
         }
-        // LogOut button logic
-        logOut.setOnClickListener {
-            logOut()
-            this.startActivity(Intent(this, MainActivity::class.java))
-        }
+        // Menu
+        menu.setOnClickListener { v: View -> showMenu(v, R.menu.popup_menu) }
     }
-    /**
-     * This method checks if biometric information is availble
-     *//*
-    private fun checkBiometricAvailable() : Boolean{
-        return when(BiometricManager.from(this).canAuthenticate(BiometricManager.Authenticators.BIOMETRIC_STRONG)){
-            BiometricManager.BIOMETRIC_SUCCESS ->{
-                Log.d(TAG,"Can use")
-                true
-            }
-            else ->{
-                Log.d(TAG, "Cant use")
-                false
-            }
-        }
-    }
-    private fun biometric(): BiometricPrompt.PromptInfo {
-        val executor = ContextCompat.getMainExecutor(this)
-        val biometricPrompt = BiometricPrompt(this, executor,
-            object : BiometricPrompt.AuthenticationCallback() {
-                override fun onAuthenticationError(errorCode: Int, errString: CharSequence) {
-                    super.onAuthenticationError(errorCode, errString)
-                    Toast.makeText(applicationContext,
-                        "Authentication error: $errString", Toast.LENGTH_SHORT)
-                        .show()
-                }
-                override fun onAuthenticationSucceeded(
-                    result: BiometricPrompt.AuthenticationResult) {
-                    super.onAuthenticationSucceeded(result)
-                    Toast.makeText(applicationContext,
-                        "Authentication succeeded!", Toast.LENGTH_SHORT)
-                        .show()
-                }
-                override fun onAuthenticationFailed() {
-                    super.onAuthenticationFailed()
-                    Toast.makeText(applicationContext, "Authentication failed",
-                        Toast.LENGTH_SHORT)
-                        .show()
-                }
-            })
-        val promptInfo = BiometricPrompt.PromptInfo.Builder()
-            .setTitle("Biometric login for my app")
-            .setSubtitle("Log in using your biometric credential")
-            .setAllowedAuthenticators(BiometricManager.Authenticators.BIOMETRIC_STRONG)
-            .setNegativeButtonText("Aaaa")
-            .build()
-        biometricPrompt.authenticate(promptInfo)
-        return promptInfo
-    }*/
-
+    
     // FUNCTIONS FOR THE CHECK IN AND OUT
     private suspend fun checkInLocal(context : Context){
         var toastText = ""
@@ -177,7 +124,6 @@ class SecondActivity  : AppCompatActivity(){
         }
     }
     // FUNCTIONS RELATED TO THE POSSITION
-
     /**
      *
      */
@@ -195,12 +141,36 @@ class SecondActivity  : AppCompatActivity(){
                 ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION)
                 == PackageManager.PERMISSION_GRANTED)}
 
+    /**
+     * Operations that the popup menu do
+     */
+    private fun showMenu(v: View, menuRes: Int) {
+        val popup = PopupMenu(context, v)
+        popup.menuInflater.inflate(menuRes, popup.menu)
+
+        popup.setOnMenuItemClickListener { menuItem: MenuItem ->
+            // Respond to menu item click.
+            when(menuItem.itemId){
+                R.id.log_out -> logOut()
+            }
+            true
+        }
+        popup.setOnDismissListener {
+            // Respond to popup being dismissed.
+        }
+        // Show the popup menu.
+        popup.show()
+    }
+
     override fun onDestroy() {
         super.onDestroy()
         if (intent.extras?.getBoolean("remember") == false)
             logOut()
     }
 
+    /*
+    * Operations that we'll do when a Permission is granted
+    * */
     override fun onRequestPermissionsResult(
         requestCode: Int,
         permissions: Array<out String>,

@@ -45,6 +45,7 @@ dependencies {
     implementation("com.squareup.retrofit2:converter-gson:2.11.0")
     // Location
     implementation("com.google.android.gms:play-services-location:19.0.1")
+    implementation(libs.androidx.cardview)
     //Enables use of stuff wich requires API level 25+
     coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.0.4")
     // Import material design

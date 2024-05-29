@@ -16,6 +16,7 @@ import androidx.core.view.isVisible
 import com.example.prueba.firebase.forgotPass
 import com.example.prueba.firebase.getCurrentUser
 import com.example.prueba.firebase.logIn
+import com.example.prueba.firebase.getCurrentUserDocument
 
 import com.google.android.material.button.MaterialButton
 
@@ -35,8 +36,11 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         //If there is an alredy logged in
-        if (getCurrentUser() != null)
+        if (getCurrentUser() != null) {
             moveNext(true)
+            CoroutineScope(Dispatchers.IO).launch { getCurrentUserDocument() }
+            this.finish()
+        }
         setContentView(R.layout.activity_main)
         //Instancing all needed variables
         user = findViewById(R.id.username)

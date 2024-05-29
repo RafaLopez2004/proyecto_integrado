@@ -14,6 +14,7 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import kotlin.collections.HashMap
 
+var userDocument : DocumentSnapshot? = null
 
 /**
  * Returns the currently logged in user, if there isn't any user logged in,
@@ -27,6 +28,7 @@ fun getCurrentUser() : FirebaseUser?{
  * Logs the current user out
  */
 fun logOut(){
+    userDocument = null
     Firebase.auth.signOut()
 }
 
@@ -40,7 +42,10 @@ fun logOut(){
 suspend fun logIn(user : String, pass : String) : Boolean? {
     val def = CompletableDeferred<Boolean?>()
     Firebase.auth.signInWithEmailAndPassword(user,pass).addOnCompleteListener {
-        def.complete(it.isSuccessful)
+        if (it.isSuccessful) {
+            def.complete(true)
+        } else
+            def.complete(false)
     }
     return def.await()
 }
@@ -84,7 +89,6 @@ suspend fun checkIn (safe : Boolean) : Int?{
     // We get the current server time
     val serverTime = getServerTime()
     // We wait until we fetch the needed resource from the database
-    val userDocument = getCurrentUserDocument()
     // We build the path where we'll be adding the data
     val fullPath = "users/" + userDocument!!.id + "/checks"
     // We check if the document already exists, this would mean the user already checked in
@@ -113,7 +117,6 @@ suspend fun checkOut() : Int? {
     // We get the current server time
     val serverTime = getServerTime()
     // We wait until we fetch the needed resource from the database
-    val userDocument = getCurrentUserDocument()
     // We build the path where we'll be adding the data
     val fullPath = "users/" + userDocument!!.id + "/checks"
     // We check if the document already exists, this would mean the user already checked in
@@ -150,28 +153,55 @@ suspend fun forgotPass(email: String) : Int?{
 /**
  * Get the current user's document id from the database
  */
-private fun getCurrentUserDocument(): DocumentSnapshot? {
+fun getCurrentUserDocument(): DocumentSnapshot? {
     val db = Firebase.firestore
     return await(db.collection("users")
         .whereEqualTo("email",getCurrentUser()?.email).get())
         .documents
         .first()
 }
+
+fun setCurrentUserDocument() {
+    val db = Firebase.firestore
+    userDocument = await(db.collection("users")
+        .whereEqualTo("email",getCurrentUser()?.email).get())
+        .documents
+        .first()
+}
+
 /**
  * Checks if the given location is in range to do the check in
  */
-fun checkLocation(location : Location) : Boolean{
+suspend fun checkLocation(location : Location) : Boolean{
     val db = Firebase.firestore
     val workplace = Location("")
-    val latitude = await(db.collection("users").document("cords").get()).getDouble("lat")
-    val longitude = await(db.collection("users").document("cords").get()).getDouble("lon")
+    val geoPoint = await(db.collection("workplace")
+            .document(getUserWorkplace())
+            .get())
 
-    if (longitude != null && latitude != null) {
+    val latitude = geoPoint.getGeoPoint("cords")?.latitude
+    val longitude = geoPoint.getGeoPoint("cords")?.longitude
+    val range = geoPoint.getDouble("range")
+
+    if (longitude != null && latitude != null && range != null) {
         workplace.longitude = longitude
         workplace.latitude = latitude
-        return location.distanceTo(workplace) < 1000 }
+        return location.distanceTo(workplace) < range
+    }
     else
         return false
+}
+/**
+ * Check the current user's workplace
+ */
+suspend fun getUserWorkplace() : String {
+    val def = CompletableDeferred<String>()
+    val prueba = userDocument!!.get("workplace").toString()
+    if(prueba.isNullOrEmpty())
+        def.complete("default")
+    else
+        def.complete(prueba)
+    return def.await()
 }
 /**
  * Returns the time of the server
