@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:id="@+id/log_out"
+    android:icon="@drawable/baseline_logout"
+    android:title="Log Out"
+    />
+    <item android:id="@+id/option_2"
+        android:icon="@drawable/baseline_fingerprint_24"
+        android:title="enroll(No hace nada aún)" />
+    <item android:id="@+id/option_3"
+        android:title="prueba2" />
+</menu>
