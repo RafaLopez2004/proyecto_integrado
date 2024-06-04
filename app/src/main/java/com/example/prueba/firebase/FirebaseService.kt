@@ -8,6 +8,7 @@ import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.auth
 import com.google.firebase.firestore.DocumentSnapshot
+import com.google.firebase.firestore.QuerySnapshot
 import com.google.firebase.firestore.firestore
 import kotlinx.coroutines.CompletableDeferred
 import retrofit2.Retrofit
@@ -134,6 +135,12 @@ suspend fun checkOut() : Int? {
     return def.await()
 }
 /**
+ *
+ */
+fun getCheckCollection() : QuerySnapshot?{ return await(Firebase.firestore.collection(
+    "users/" + userDocument!!.id + "/checks").get()) }
+
+/**
  * Tries to send a reset email to the given email, if it was successful it will return 1,
  * -1 if an error occurred or 0  if the email isn't registered
  */
@@ -243,5 +250,5 @@ private fun formatDate(timeModel: TimeModel) : String {
     return "${timeModel.day}-${timeModel.month}-${timeModel.year}"
 }
 private fun formatTime(timeModel: TimeModel) : String{
-    return "${timeModel.hour}:${timeModel.minute}:${timeModel.second}"
+    return "${timeModel.hour}:${timeModel.minute}"
 }

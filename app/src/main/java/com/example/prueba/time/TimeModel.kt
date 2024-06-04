@@ -5,6 +5,5 @@ data class TimeModel(
     val month : String,
     val year : String,
     val hour: String,
-    val minute: String,
-    val second: String
+    val minute: String
 )

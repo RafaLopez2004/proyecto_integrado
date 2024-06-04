@@ -15,17 +15,23 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.example.prueba.firebase.checkIn
 import com.example.prueba.firebase.checkLocation
 import com.example.prueba.firebase.checkOut
+import com.example.prueba.firebase.getCheckCollection
 import com.example.prueba.firebase.logOut
 import com.example.prueba.firebase.setCurrentUserDocument
+import com.example.prueba.recycler.DataModel
+import com.example.prueba.recycler.RecyclerAdapter
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
+import java.util.ArrayList
 
 class SecondActivity  : AppCompatActivity(){
 
@@ -34,6 +40,8 @@ class SecondActivity  : AppCompatActivity(){
     private var safe : Boolean = true
     private lateinit var fusedLocationClient: FusedLocationProviderClient
     private lateinit var context : Context
+    private lateinit var mRecyclerView : RecyclerView
+    private val mAdapter : RecyclerAdapter = RecyclerAdapter()
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -42,7 +50,6 @@ class SecondActivity  : AppCompatActivity(){
         val inButton: TextView = findViewById(R.id.checkin)
         val outButton: TextView = findViewById(R.id.checkout)
         val menu: ImageButton = findViewById(R.id.superior_menu)
-        val logOut: TextView = findViewById(R.id.logout)
         var operating = false
         context = this
 
@@ -80,6 +87,11 @@ class SecondActivity  : AppCompatActivity(){
             else
                 Toast.makeText(context, "Wait until the previous operation is completed", Toast.LENGTH_LONG).show()
         }
+        //Recycler view with history
+        this.setUpRecyclerView()
+
+
+
         // Menu
         menu.setOnClickListener { v: View -> showMenu(v, R.menu.popup_menu) }
     }
@@ -141,6 +153,7 @@ class SecondActivity  : AppCompatActivity(){
                 ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION)
                 == PackageManager.PERMISSION_GRANTED)}
 
+    // POP UP MENU RELATED
     /**
      * Operations that the popup menu do
      */
@@ -151,7 +164,11 @@ class SecondActivity  : AppCompatActivity(){
         popup.setOnMenuItemClickListener { menuItem: MenuItem ->
             // Respond to menu item click.
             when(menuItem.itemId){
-                R.id.log_out -> logOut()
+                R.id.log_out -> {
+                    logOut()
+                    this.startActivity(Intent(this, MainActivity::class.java))
+                    this.finish()
+                }
             }
             true
         }
@@ -160,6 +177,59 @@ class SecondActivity  : AppCompatActivity(){
         }
         // Show the popup menu.
         popup.show()
+    }
+    //RECYCLER VIEW FUNCTIONS
+
+    /**
+     *
+     */
+    private fun setUpRecyclerView(){
+        mRecyclerView = findViewById(R.id.recycler)
+        mRecyclerView.setHasFixedSize(true)
+        mRecyclerView.layoutManager = LinearLayoutManager(this)
+        mAdapter.setUp(this)
+        CoroutineScope(Dispatchers.IO).launch {
+            updateRecycler()
+            runOnUiThread { mRecyclerView.adapter = mAdapter }
+        }
+
+    }
+
+    private fun updateRecycler(){
+        setCurrentUserDocument()
+        val collection = getCheckCollection()
+        if (collection != null) {
+            var util: String?
+            var array: MutableList<DataModel>  = ArrayList()
+            for (document in collection) {
+                var chkIn = "Not Done"
+                var chkOut = "Not Done"
+                util = document.getString("in")
+                if (!util.isNullOrEmpty())
+                    chkIn = util
+                util = document.getString("out")
+                if (!util.isNullOrEmpty())
+                    chkOut = util
+                array.add(DataModel(document.id, chkIn, chkOut))
+                //mAdapter.notifyItemInserted(mAdapter.itemCount)
+            }
+            array = array.sortedWith { a, b ->
+                val aSeparated = a.day.split("-")
+                val bSeparated = b.day.split("-")
+                when {
+                    (a.day == b.day) -> 0
+                    (aSeparated[2].toInt() < bSeparated[2].toInt()) -> 1
+                    (aSeparated[2].toInt() == bSeparated[2].toInt() &&
+                            aSeparated[1].toInt() < bSeparated[1].toInt()) -> 1
+                    (aSeparated[2].toInt() == bSeparated[2].toInt() &&
+                            aSeparated[1].toInt() == bSeparated[1].toInt() &&
+                            aSeparated[0].toInt() < bSeparated[0].toInt()) -> 1
+
+                    else -> -1
+                }
+            }.toMutableList()
+            mAdapter.setArrayData(array)
+        }
     }
 
     override fun onDestroy() {

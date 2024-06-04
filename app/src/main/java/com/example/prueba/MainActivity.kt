@@ -39,7 +39,6 @@ class MainActivity : AppCompatActivity() {
         if (getCurrentUser() != null) {
             moveNext(true)
             CoroutineScope(Dispatchers.IO).launch { getCurrentUserDocument() }
-            this.finish()
         }
         setContentView(R.layout.activity_main)
         //Instancing all needed variables
@@ -108,5 +107,6 @@ class MainActivity : AppCompatActivity() {
         intent = Intent(this, SecondActivity::class.java)
         intent.putExtra("remember", remember)
         this.startActivity(intent)
+        this.finish()
     }
 }
