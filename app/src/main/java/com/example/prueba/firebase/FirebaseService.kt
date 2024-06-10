@@ -16,6 +16,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 import kotlin.collections.HashMap
 
 var userDocument : DocumentSnapshot? = null
+var userName : String = ""
 
 /**
  * Returns the currently logged in user, if there isn't any user logged in,
@@ -25,10 +26,23 @@ fun getCurrentUser() : FirebaseUser?{
     return Firebase.auth.currentUser
 }
 
+fun setCurrentUserName() {
+    if (userName != ""){
+        val email = getCurrentUser()?.email
+        if (email != null)
+            userName = email.split("@")[0]
+    }
+}
+
+fun getCurrentUserName() : String{
+    return userName
+}
+
 /**
  * Logs the current user out
  */
 fun logOut(){
+    userName = ""
     userDocument = null
     Firebase.auth.signOut()
 }
@@ -44,41 +58,10 @@ suspend fun logIn(user : String, pass : String) : Boolean? {
     val def = CompletableDeferred<Boolean?>()
     Firebase.auth.signInWithEmailAndPassword(user,pass).addOnCompleteListener {
         if (it.isSuccessful) {
+            userName = user.split("@")[0]
             def.complete(true)
         } else
             def.complete(false)
-    }
-    return def.await()
-}
-/**
- * Create a new user and returns a integer witch indicates if it was succesful (1),
- * the email is already registered (0) or there was an error (-1)
- */
-suspend fun createUser(email : String, pass : String) : Int? {
-    val def = CompletableDeferred<Int?>()
-    //TODO We check if the user already exist
-
-    // We create a user
-    Firebase.auth.createUserWithEmailAndPassword(email,pass).addOnCompleteListener{
-        // If the user is created succesfully
-        if (it.isSuccessful) {
-            /* We add the user to the database */
-            val data = HashMap<String, Any>()
-            val db = Firebase.firestore
-            data["email"] = email
-            data["checks"] = HashMap<String, Any>()
-            db.collection("users")
-                .add(data)
-                .addOnCompleteListener {itd->
-                    if (itd.isSuccessful){
-                        def.complete(1)
-                    }else
-                        getCurrentUser()?.delete()?.addOnCompleteListener {
-                            def.complete(-1)
-                        }
-                }
-        } else
-            def.complete(-1)
     }
     return def.await()
 }

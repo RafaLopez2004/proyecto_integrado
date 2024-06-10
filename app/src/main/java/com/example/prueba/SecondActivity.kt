@@ -13,6 +13,7 @@ import android.widget.ImageButton
 import android.widget.PopupMenu
 import android.widget.TextView
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -20,8 +21,12 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.prueba.firebase.checkIn
 import com.example.prueba.firebase.checkLocation
 import com.example.prueba.firebase.checkOut
+import com.example.prueba.firebase.forgotPass
 import com.example.prueba.firebase.getCheckCollection
+import com.example.prueba.firebase.getCurrentUser
+import com.example.prueba.firebase.getCurrentUserName
 import com.example.prueba.firebase.logOut
+import com.example.prueba.firebase.setCurrentUserName
 import com.example.prueba.firebase.setCurrentUserDocument
 import com.example.prueba.recycler.DataModel
 import com.example.prueba.recycler.RecyclerAdapter
@@ -43,10 +48,11 @@ class SecondActivity  : AppCompatActivity(){
     private lateinit var mRecyclerView : RecyclerView
     private val mAdapter : RecyclerAdapter = RecyclerAdapter()
 
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.prueba)
+        setCurrentUserName()
+        findViewById<TextView>(R.id.bar_txt).text = String.format(getString(R.string.history), getCurrentUserName())
         val inButton: TextView = findViewById(R.id.checkin)
         val outButton: TextView = findViewById(R.id.checkout)
         val menu: ImageButton = findViewById(R.id.superior_menu)
@@ -94,6 +100,11 @@ class SecondActivity  : AppCompatActivity(){
 
         // Menu
         menu.setOnClickListener { v: View -> showMenu(v, R.menu.popup_menu) }
+
+        if(intent.extras?.getBoolean("remember") == false){
+            Toast.makeText(context, "Pruebaaaaa", Toast.LENGTH_LONG).show()
+
+        }
     }
     
     // FUNCTIONS FOR THE CHECK IN AND OUT
@@ -168,6 +179,23 @@ class SecondActivity  : AppCompatActivity(){
                     logOut()
                     this.startActivity(Intent(this, MainActivity::class.java))
                     this.finish()
+                }
+                R.id.remember_menu -> {
+                    var response = ""
+                    CoroutineScope(Dispatchers.IO).launch {
+                        when (forgotPass(getCurrentUser()?.email.toString())) {
+                            -1 -> response = "Ha ocurrido un error durante la operacion"
+                            0 -> response = "El email seleccionado no esta registrado"
+                            1 -> response = "Email de restablecimiento enviado con exito"
+                        }
+                        //Dialogue with result of the operation
+                        runOnUiThread {
+                            AlertDialog.Builder(context)
+                                .setMessage(response)
+                                .setPositiveButton("OK", null)
+                                .show()
+                        }
+                    }
                 }
             }
             true

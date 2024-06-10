@@ -5,10 +5,12 @@
     <string name="enroll_text">Enroll</string>
     <string name="sign_in">Sign in</string>
     <string name="password">Password</string>
-    <string name="login">login</string>
+    <string name="login">Login</string>
     <string name="forgot_password">Forgot password?</string>
     <string name="username">Username</string>
     <string name="invalid_credentials">Invalid credentials</string>
     <string name="remember_password">Remember password?</string>
-
+    <string name="log_out">Log Out</string>
+    <string name="change_password">Change Password</string>
+    <string name="history">History of %1$s</string>
 </resources>

@@ -26,6 +26,15 @@
                 android:background="#0037FF"
                 />
 
+            <TextView
+                android:layout_width="325dp"
+                android:layout_height="match_parent"
+                android:id="@+id/bar_txt"
+                android:textColor="@color/white"
+                android:textStyle="bold"
+                android:gravity="center"/>
+
+
         </LinearLayout>
 
         <androidx.recyclerview.widget.RecyclerView

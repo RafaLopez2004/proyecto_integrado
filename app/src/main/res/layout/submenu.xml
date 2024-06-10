@@ -12,7 +12,7 @@
     <LinearLayout android:layout_width="match_parent"
         android:layout_height="60dp"
         android:baselineAligned="false"
-        android:background="@color/blue"
+        android:background="@color/design_default_color_secondary"
         >
 
         <TextView
@@ -20,7 +20,7 @@
             android:layout_height="match_parent"
             android:text="Check in"
             android:gravity="center"
-            android:textColor="@color/light_grey"
+            android:textColor="@color/white"
             android:layout_weight="0.925"
             android:padding="10dp"
             card_view:drawableStartCompat="@drawable/baseline_checkin_24"
@@ -30,7 +30,7 @@
         <View
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:background="@color/light_grey"
+            android:background="@color/white"
             android:layout_weight="0.01"
             android:paddingVertical="10dp"
             />
@@ -41,7 +41,7 @@
             android:layout_height="match_parent"
             android:text="Check out"
             android:gravity="center"
-            android:textColor="@color/light_grey"
+            android:textColor="@color/white"
             card_view:drawableStartCompat="@drawable/baseline_checkout_24"
             android:layout_weight="0.925"
             android:padding="10dp"

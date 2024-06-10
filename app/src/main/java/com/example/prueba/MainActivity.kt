@@ -53,7 +53,7 @@ class MainActivity : AppCompatActivity() {
             CoroutineScope(Dispatchers.IO).launch {
                 if(logIn(user.text.toString(), password.text.toString()) == true) {
                     //If successful, we'll move to the next activity
-                    moveNext(remember.isActivated)
+                    moveNext(remember.isChecked)
                 } else {
                     //Otherwise we'll show an error message to the user
                     runOnUiThread {
