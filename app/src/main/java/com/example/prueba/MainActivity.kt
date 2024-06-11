@@ -50,16 +50,19 @@ class MainActivity : AppCompatActivity() {
         remember = findViewById(R.id.remember)
         //When presses, it will try to login the user,
         login.setOnClickListener {
-            CoroutineScope(Dispatchers.IO).launch {
+            // We check if the user has inputted the credentials
+            if(user.text.isEmpty() || password.text.isEmpty()){
+                wrong.setText(R.string.incomplete_credentials)
+                wrong.isVisible = true
+            } else CoroutineScope(Dispatchers.IO).launch {
                 if(logIn(user.text.toString(), password.text.toString()) == true) {
                     //If successful, we'll move to the next activity
                     moveNext(remember.isChecked)
-                } else {
+                } else runOnUiThread {
                     //Otherwise we'll show an error message to the user
-                    runOnUiThread {
-                        password.text.clear()
-                        wrong.isVisible = true
-                    }
+                    password.text.clear()
+                    wrong.setText(R.string.invalid_credentials)
+                    wrong.isVisible = true
                 }
             }
         }
@@ -67,7 +70,7 @@ class MainActivity : AppCompatActivity() {
             val context = this
             //dialogue asking for the email we want to reset pass
             val builder = AlertDialog.Builder(context)
-            builder.setTitle("Introduzca el email")
+            builder.setTitle("Introduce your email")
             val inflatedView = LayoutInflater.from(context)
                 .inflate(R.layout.forgot_dialog, findViewById(R.id.main), false)
             val input = inflatedView.findViewById<EditText>(R.id.input)
@@ -75,15 +78,15 @@ class MainActivity : AppCompatActivity() {
             // Button to send he email o the direction given by the user
             builder.setPositiveButton("Ok") { _, _ ->
                 if (input.text.toString().isBlank())
-                    Toast.makeText(context, "Introduzca un email en el campo", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(context, "Introduce your email in the field", Toast.LENGTH_SHORT).show()
                 else {
                     var response = ""
                     CoroutineScope(Dispatchers.IO).launch {
                         //Reset method
                         when (forgotPass(input.text.toString())) {
-                            -1 -> response = "Ha ocurrido un error durante la operacion"
-                            0 -> response = "El email seleccionado no esta registrado"
-                            1 -> response = "Email de restablecimiento enviado con exito"
+                            -1 -> response = "An error has occurred"
+                            0 -> response = "The selected email isn't selected"
+                            1 -> response = "Sent an email to recover your password"
                         }
                         //Dialogue with result of the operation
                         runOnUiThread {

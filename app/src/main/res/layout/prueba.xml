@@ -13,7 +13,7 @@
             android:layout_width="match_parent"
             android:layout_height="50dp"
             android:id="@+id/superior_bar"
-            android:background="#0037FF"
+            android:background="@color/purple"
             android:orientation="horizontal">
 
             <ImageButton
@@ -23,7 +23,7 @@
                 android:layout_gravity="center"
                 android:padding="10dp"
                 android:id="@+id/superior_menu"
-                android:background="#0037FF"
+                android:background="@color/purple"
                 />
 
             <TextView

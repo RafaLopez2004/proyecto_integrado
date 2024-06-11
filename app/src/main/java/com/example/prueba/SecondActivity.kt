@@ -76,37 +76,29 @@ class SecondActivity  : AppCompatActivity(){
                     operating = false
                 } }
             else
-                Toast.makeText(context, "Espera a que termine la operación anterior", Toast.LENGTH_LONG).show()
+                Toast.makeText(context, R.string.wait, Toast.LENGTH_LONG).show()
         }
         // Check out button logic
         outButton.setOnClickListener {
             if (!operating){
-            CoroutineScope(Dispatchers.IO).launch {
-                operating = true
-                if (checkPermission())
-                    checkOutLocal(context)
-                else
-                    ActivityCompat.requestPermissions(context as SecondActivity,
-                        arrayOf(Manifest.permission.ACCESS_FINE_LOCATION), LOC_CODE_OUT)
-                operating = false
-            } }
+                CoroutineScope(Dispatchers.IO).launch {
+                    operating = true
+                    if (checkPermission())
+                        checkOutLocal(context)
+                    else
+                        ActivityCompat.requestPermissions(context as SecondActivity,
+                            arrayOf(Manifest.permission.ACCESS_FINE_LOCATION), LOC_CODE_OUT)
+                    operating = false
+                } }
             else
-                Toast.makeText(context, "Wait until the previous operation is completed", Toast.LENGTH_LONG).show()
+                Toast.makeText(context, R.string.wait, Toast.LENGTH_LONG).show()
         }
         //Recycler view with history
         this.setUpRecyclerView()
-
-
-
         // Menu
         menu.setOnClickListener { v: View -> showMenu(v, R.menu.popup_menu) }
-
-        if(intent.extras?.getBoolean("remember") == false){
-            Toast.makeText(context, "Pruebaaaaa", Toast.LENGTH_LONG).show()
-
-        }
     }
-    
+
     // FUNCTIONS FOR THE CHECK IN AND OUT
     private suspend fun checkInLocal(context : Context){
         var toastText = ""
@@ -184,9 +176,8 @@ class SecondActivity  : AppCompatActivity(){
                     var response = ""
                     CoroutineScope(Dispatchers.IO).launch {
                         when (forgotPass(getCurrentUser()?.email.toString())) {
-                            -1 -> response = "Ha ocurrido un error durante la operacion"
-                            0 -> response = "El email seleccionado no esta registrado"
-                            1 -> response = "Email de restablecimiento enviado con exito"
+                            -1 or 0 -> response = "An error has occurred"
+                            1 -> response = "Sent an email to recover your password"
                         }
                         //Dialogue with result of the operation
                         runOnUiThread {

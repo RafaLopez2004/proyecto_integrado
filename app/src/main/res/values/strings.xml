@@ -9,8 +9,10 @@
     <string name="forgot_password">Forgot password?</string>
     <string name="username">Username</string>
     <string name="invalid_credentials">Invalid credentials</string>
+    <string name="incomplete_credentials">Please complete all fields</string>
     <string name="remember_password">Remember password?</string>
     <string name="log_out">Log Out</string>
     <string name="change_password">Change Password</string>
     <string name="history">History of %1$s</string>
+    <string name="wait">Wait until the previous operation is completed</string>
 </resources>
