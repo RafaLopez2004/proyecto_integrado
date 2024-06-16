@@ -1,4 +1,4 @@
-package com.example.prueba
+package com.example.prueba.ui
 
 import android.Manifest
 import android.annotation.SuppressLint
@@ -19,6 +19,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.prueba.R
 import com.example.prueba.firebase.checkIn
 import com.example.prueba.firebase.checkLocation
 import com.example.prueba.firebase.checkOut
@@ -111,14 +112,14 @@ class SecondActivity  : AppCompatActivity(){
             // We try to check in
             when (checkIn(formatDate(getServerTime()))) {
                 1 ->
-                    toastText = "Check in successful"
+                    toastText = getString(R.string.check_in_sucess)
                 0 ->
-                    toastText = "You already checked in"
+                    toastText = getString(R.string.check_in_done)
                 -1 ->
-                    toastText = "An error occurred while checking in"
+                    toastText = getString(R.string.check_in_error)
             } }
         else
-            toastText = "You arent in range to check in"
+            toastText = getString(R.string.check_in_range)
         // Print the result of the operation
         runOnUiThread { Toast.makeText(context, toastText, Toast.LENGTH_LONG).show() }
     }
@@ -130,14 +131,14 @@ class SecondActivity  : AppCompatActivity(){
         if (location != null && checkLocation(location)) {
             when (checkOut(formatDate(getServerTime()))) {
                 1 ->
-                    toastText = "Check out successful"
+                    toastText = getString(R.string.check_out_sucess)
                 0 ->
-                    toastText = "You haven't checked in today"
+                    toastText = getString(R.string.check_in_out_done)
                 -1 ->
-                    toastText = "An error occurred while checking out"
+                    toastText = getString(R.string.check_out_error)
             } }
         else
-            toastText = "You arent in range to check out"
+            toastText = getString(R.string.check_out_range)
         runOnUiThread { Toast.makeText(context, toastText, Toast.LENGTH_LONG).show()
         }
     }
@@ -173,7 +174,7 @@ class SecondActivity  : AppCompatActivity(){
                 R.id.log_out -> {
                     var dialog : AlertDialog? = null
                     val builder = AlertDialog.Builder(context)
-                    builder.setTitle("Are you sure you want to log out")
+                    builder.setTitle(getString(R.string.sure))
                     val inflatedView = LayoutInflater.from(context)
                         .inflate(R.layout.log_out_dialog, findViewById(R.id.second), false)
                     val logOutBtn : MaterialButton = inflatedView.findViewById(R.id.log_out_btn_dialog)
@@ -196,8 +197,8 @@ class SecondActivity  : AppCompatActivity(){
                     var response = ""
                     CoroutineScope(Dispatchers.IO).launch {
                         when (forgotPass(getCurrentUser()?.email.toString())) {
-                            -1 or 0 -> response = "An error has occurred"
-                            1 -> response = "Sent an email to recover your password"
+                            -1 or 0 -> response = getString(R.string.error)
+                            1 -> response = getString(R.string.email_sent)
                         }
                         //Dialogue with result of the operation
                         runOnUiThread {
@@ -241,8 +242,8 @@ class SecondActivity  : AppCompatActivity(){
             var util: String?
             var array: MutableList<DataModel>  = ArrayList()
             for (document in collection) {
-                var chkIn = "Not Done"
-                var chkOut = "Not Done"
+                var chkIn = getString(R.string.not_done)
+                var chkOut =  getString(R.string.not_done)
                 util = document.getString("in")
                 if (!util.isNullOrEmpty())
                     chkIn = util
@@ -286,7 +287,7 @@ class SecondActivity  : AppCompatActivity(){
         grantResults: IntArray)
     {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        val toastText = "We require your location to check if you are in your workplace"
+        val toastText = getString(R.string.check_workplace)
         when(requestCode){
             LOC_CODE -> {
                 if (grantResults[0] == PackageManager.PERMISSION_GRANTED)

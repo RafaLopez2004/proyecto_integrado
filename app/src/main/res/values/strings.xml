@@ -1,9 +1,9 @@
 <resources>
-    <string name="app_name">prueba</string>
-    <string name="checkIn_text">Check-in</string>
-    <string name="checkOut_text">Check-out</string>
-    <string name="enroll_text">Enroll</string>
-    <string name="sign_in">Sign in</string>
+    <string name="app_name">Geo-Check</string>
+    <string name="checkIn_text" translatable="false">Check-in</string>
+    <string name="checkOut_text" translatable="false">Check-out</string>
+    <string name="enroll_text" translatable="false">Enroll</string>
+    <string name="sign_in" translatable="false">Sign in</string>
     <string name="password">Password</string>
     <string name="login">Login</string>
     <string name="forgot_password">Forgot password?</string>
@@ -16,5 +16,27 @@
     <string name="history">History of %1$s</string>
     <string name="wait">Wait until the previous operation is completed</string>
     <string name="cancel">Cancel</string>
-    <string name="email">email</string>
+    <string name="accept">Accept</string>
+    <string name="email" translatable="false">email</string>
+    <string name="introduce_mail">Introduce your email</string>
+    <string name="introduce_mail_field">Introduce your email in the field</string>
+    <string name="error">An error has occurred</string>
+    <string name="register">The selected email isn\'t selected registered </string>
+    <string name="email_sent">Sent an email to recover your password</string>
+    <string name="check_in_sucess">Check in successful</string>
+    <string name="check_in_done">You already checked in</string>
+    <string name="check_in_error">An error occurred while checking in</string>
+    <string name="check_in_range">You arent in range to check in</string>
+    <string name="check_out_sucess">Check out successful</string>
+    <string name="check_out_done">You already checked out</string>
+    <string name="check_in_out_done">You haven\'t checked in today</string>
+    <string name="check_out_error">An error occurred while checking out</string>
+    <string name="check_out_range">You arent in range to check out</string>
+    <string name="sure">Are you sure you want to log out</string>
+    <string name="not_done">Not Done</string>
+    <string name="check_workplace">We require your location to check if you are in your workplace</string>
+
+
+
+
 </resources>

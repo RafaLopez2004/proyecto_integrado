@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Geo-Check</string>
+    <string name="password">Contraseña</string>
+    <string name="login">Iniciar sesion</string>
+    <string name="forgot_password">¿Olvidaste la contraseña?</string>
+    <string name="username">Usuario</string>
+    <string name="invalid_credentials">Credenciales invalidas</string>
+    <string name="incomplete_credentials">Rellena todos los campos</string>
+    <string name="remember_password">¿Recordar contraseña?</string>
+    <string name="log_out">Cerrar Sesion</string>
+    <string name="change_password">Cambiar contraseña</string>
+    <string name="history">Historial de %1$s</string>
+    <string name="wait">Espera a que termine la operación anterior</string>
+    <string name="cancel">Cancelar</string>
+    <string name="accept">Aceptar</string>
+</resources>

@@ -1,4 +1,4 @@
-package com.example.prueba
+package com.example.prueba.ui
 
 
 import android.content.Intent
@@ -12,6 +12,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
+import com.example.prueba.R
 
 import com.example.prueba.firebase.forgotPass
 import com.example.prueba.firebase.getCurrentUser
@@ -70,7 +71,7 @@ class MainActivity : AppCompatActivity() {
             val context = this
             //dialogue asking for the email we want to reset pass
             val builder = AlertDialog.Builder(context)
-            builder.setTitle("Introduce your email")
+            builder.setTitle(getString(R.string.introduce_mail))
             val inflatedView = LayoutInflater.from(context)
                 .inflate(R.layout.forgot_dialog, findViewById(R.id.main), false)
             val input = inflatedView.findViewById<EditText>(R.id.input)
@@ -78,15 +79,15 @@ class MainActivity : AppCompatActivity() {
             // Button to send he email o the direction given by the user
             builder.setPositiveButton("Ok") { _, _ ->
                 if (input.text.toString().isBlank())
-                    Toast.makeText(context, "Introduce your email in the field", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(context, getString(R.string.introduce_mail_field), Toast.LENGTH_SHORT).show()
                 else {
                     var response = ""
                     CoroutineScope(Dispatchers.IO).launch {
                         //Reset method
                         when (forgotPass(input.text.toString())) {
-                            -1 -> response = "An error has occurred"
-                            0 -> response = "The selected email isn't selected"
-                            1 -> response = "Sent an email to recover your password"
+                            -1 -> response =  getString(R.string.introduce_mail_field)
+                            0 -> response = getString(R.string.register)
+                            1 -> response = getString(R.string.email_sent)
                         }
                         //Dialogue with result of the operation
                         runOnUiThread {
@@ -99,7 +100,7 @@ class MainActivity : AppCompatActivity() {
                 }
             }
             // Button to cancel the operation
-            builder.setNegativeButton("Cancel"){dialog, _ ->
+            builder.setNegativeButton(getString(R.string.cancel)){dialog, _ ->
                 dialog.cancel()
             }
             // We show the dialogue
