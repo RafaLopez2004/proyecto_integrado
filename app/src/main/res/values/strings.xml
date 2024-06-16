@@ -3,7 +3,7 @@
     <string name="checkIn_text" translatable="false">Check-in</string>
     <string name="checkOut_text" translatable="false">Check-out</string>
     <string name="enroll_text" translatable="false">Enroll</string>
-    <string name="sign_in" translatable="false">Sign in</string>
+    <string name="sign_in">Sign in</string>
     <string name="password">Password</string>
     <string name="login">Login</string>
     <string name="forgot_password">Forgot password?</string>
@@ -32,11 +32,10 @@
     <string name="check_in_out_done">You haven\'t checked in today</string>
     <string name="check_out_error">An error occurred while checking out</string>
     <string name="check_out_range">You arent in range to check out</string>
-    <string name="sure">Are you sure you want to log out</string>
+    <string name="sure">Are you sure you want to log out?</string>
     <string name="not_done">Not Done</string>
     <string name="check_workplace">We require your location to check if you are in your workplace</string>
-
-
+    <string name="day">Day:</string>
 
 
 </resources>

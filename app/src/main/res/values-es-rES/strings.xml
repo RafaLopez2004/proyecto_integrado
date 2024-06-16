@@ -14,4 +14,23 @@
     <string name="wait">Espera a que termine la operación anterior</string>
     <string name="cancel">Cancelar</string>
     <string name="accept">Aceptar</string>
+    <string name="introduce_mail">Introduce tu email</string>
+    <string name="introduce_mail_field">Introduce tu email en el campo</string>
+    <string name="error">Ha ocurrido un error</string>
+    <string name="register">El email seleccionado no esta registrado</string>
+    <string name="email_sent">Enviado un correo de verificación</string>
+    <string name="check_in_sucess">Check in exitoso</string>
+    <string name="check_in_done">Ya has hecho un check in</string>
+    <string name="check_in_error">Ha ocurrido un error durante el check in</string>
+    <string name="check_in_range">No te encuentras a rango</string>
+    <string name="check_out_sucess">Check out exitoso</string>
+    <string name="check_out_done">Ya has hecho tu check out</string>
+    <string name="check_in_out_done">No has hecho un check in</string>
+    <string name="check_out_error">Ha ocurrido un error en el check out</string>
+    <string name="check_out_range">No te encuentras a rango</string>
+    <string name="sure">¿Estas seguro de que quieres cerrar sesión?</string>
+    <string name="not_done">Sin hacer</string>
+    <string name="check_workplace">Necesitamos tu posición para comprobar si te encuentras en tu puesto de trabajo</string>
+    <string name="sign_in">Iniciar Sesion</string>
+    <string name="day">Dia:</string>
 </resources>

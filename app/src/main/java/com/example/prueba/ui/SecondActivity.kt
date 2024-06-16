@@ -69,7 +69,9 @@ class SecondActivity  : AppCompatActivity(){
 
         // Check in button logic
         inButton.setOnClickListener {
+            // We check if there is an operation
             if (!operating){
+                // The first thing we do is change the operation state
                 operating = true
                 CoroutineScope(Dispatchers.IO).launch {
                     if (checkPermission())
@@ -77,6 +79,7 @@ class SecondActivity  : AppCompatActivity(){
                     else
                         ActivityCompat.requestPermissions(context as SecondActivity,
                             arrayOf(Manifest.permission.ACCESS_FINE_LOCATION), LOC_CODE)
+                    //When we finish we set it back to false, so other operation may begin
                     operating = false
                 } }
             else
@@ -136,6 +139,8 @@ class SecondActivity  : AppCompatActivity(){
                     toastText = getString(R.string.check_in_out_done)
                 -1 ->
                     toastText = getString(R.string.check_out_error)
+                -2 ->
+                    toastText = getString(R.string.check_out_done)
             } }
         else
             toastText = getString(R.string.check_out_range)

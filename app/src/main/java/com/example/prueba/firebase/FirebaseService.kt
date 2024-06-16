@@ -75,10 +75,9 @@ suspend fun checkIn (documentName: String) : Int?{
     // We wait until we fetch the needed resource from the database
     // We build the path where we'll be adding the data
     val fullPath = "users/" + userDocument!!.id + "/checks"
-    // We check if the document already exists, this would mean the user already checked in
     val db = Firebase.firestore
+    // We check if the document already exists, this would mean the user already checked in
     var exist = pathExists(fullPath, documentName)
-
     if (exist == 0){
         // The data we'll be adding to the database
         val data = HashMap<String, Any>()
@@ -119,7 +118,7 @@ suspend fun checkOut(documentName: String) : Int? {
     val db = Firebase.firestore
     if (exist == 1){
         val collection = db.collection(fullPath)
-        //We check if it is first or second turn
+        //We check if current document check out is done
         if (await(collection.document(documentName).get()).getString("out")?.isEmpty() == true){
             // We try to add the data to the databasse
             collection.document(documentName).update("out",
@@ -128,7 +127,7 @@ suspend fun checkOut(documentName: String) : Int? {
             }
         } else if (documentName == formatDate(serverTime))
             def.complete(checkOut("$documentName- (2nd turn)"))
-        else def.complete(exist)
+        else def.complete(-2)
 
     } else def.complete(exist)
 

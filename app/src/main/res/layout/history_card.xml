@@ -30,7 +30,7 @@
             <TextView
                 android:layout_width="90dp"
                 android:layout_height="match_parent"
-                android:text="Day:"
+                android:text="@string/day"
                 />
             <TextView
                 android:layout_width="match_parent"
