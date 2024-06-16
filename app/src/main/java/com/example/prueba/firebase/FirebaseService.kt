@@ -68,7 +68,7 @@ suspend fun logIn(user : String, pass : String) : Boolean? {
 /**
  * Register the check in the database for the current user if he hasn't checked in today already
  */
-suspend fun checkIn (safe : Boolean) : Int?{
+suspend fun checkIn (documentName: String) : Int?{
     val def = CompletableDeferred<Int?>()
     // We get the current server time
     val serverTime = getServerTime()
@@ -76,27 +76,38 @@ suspend fun checkIn (safe : Boolean) : Int?{
     // We build the path where we'll be adding the data
     val fullPath = "users/" + userDocument!!.id + "/checks"
     // We check if the document already exists, this would mean the user already checked in
-    val exist = pathExists(fullPath, formatDate(serverTime))
+    val db = Firebase.firestore
+    var exist = pathExists(fullPath, documentName)
+
     if (exist == 0){
-        val db = Firebase.firestore
         // The data we'll be adding to the database
         val data = HashMap<String, Any>()
         data["in"] = formatTime(serverTime)
         data["out"] = ""
-        data["safe"] = safe
         // We try to add the data to the databasse
-        db.collection(fullPath).document(formatDate(serverTime)).set(data).addOnCompleteListener{
+        db.collection(fullPath).document(documentName).set(data).addOnCompleteListener{
             def.complete(if (it.isSuccessful) 1 else -1)
         }
-    }else{
-        def.complete(if (exist == 1) 0 else -1)
+    } else{
+        val out = await(db.collection(fullPath).document(documentName).get()).get("out").toString()
+        if (out.isEmpty())
+            def.complete(if (exist == 1) 0 else -1)
+        else {
+            val newDocumentName = "$documentName- (2nd turn)"
+            exist = pathExists(fullPath, newDocumentName)
+            if (exist == 0)
+                def.complete(checkIn(newDocumentName))
+
+            def.complete(0)
+        }
     }
+
     return def.await()
 }
 /**
  *
  */
-suspend fun checkOut() : Int? {
+suspend fun checkOut(documentName: String) : Int? {
     val def = CompletableDeferred<Int?>()
     // We get the current server time
     val serverTime = getServerTime()
@@ -104,17 +115,23 @@ suspend fun checkOut() : Int? {
     // We build the path where we'll be adding the data
     val fullPath = "users/" + userDocument!!.id + "/checks"
     // We check if the document already exists, this would mean the user already checked in
-    val exist = pathExists(fullPath, formatDate(serverTime))
+    val exist = pathExists(fullPath, documentName)
+    val db = Firebase.firestore
     if (exist == 1){
-        val db = Firebase.firestore
-        // We try to add the data to the databasse
-        db.collection(fullPath).document(formatDate(serverTime)).update("out",
-            formatTime(getServerTime())).addOnCompleteListener{
-            def.complete(if (it.isSuccessful) 1 else -1)
-        }
-    }else{
-        def.complete(exist)
-    }
+        val collection = db.collection(fullPath)
+        //We check if it is first or second turn
+        if (await(collection.document(documentName).get()).getString("out")?.isEmpty() == true){
+            // We try to add the data to the databasse
+            collection.document(documentName).update("out",
+                formatTime(getServerTime())).addOnCompleteListener{
+                def.complete(if (it.isSuccessful) 1 else -1)
+            }
+        } else if (documentName == formatDate(serverTime))
+            def.complete(checkOut("$documentName- (2nd turn)"))
+        else def.complete(exist)
+
+    } else def.complete(exist)
+
     return def.await()
 }
 /**
@@ -166,8 +183,8 @@ suspend fun checkLocation(location : Location) : Boolean{
     val db = Firebase.firestore
     val workplace = Location("")
     val geoPoint = await(db.collection("workplace")
-            .document(getUserWorkplace())
-            .get())
+        .document(getUserWorkplace())
+        .get())
 
     val latitude = geoPoint.getGeoPoint("cords")?.latitude
     val longitude = geoPoint.getGeoPoint("cords")?.longitude
@@ -186,17 +203,17 @@ suspend fun checkLocation(location : Location) : Boolean{
  */
 suspend fun getUserWorkplace() : String {
     val def = CompletableDeferred<String>()
-    val prueba = userDocument!!.get("workplace").toString()
-    if(prueba.isNullOrEmpty())
+    val workplace = userDocument!!.getString("userWorkplace")
+    if(workplace.isNullOrEmpty())
         def.complete("default")
     else
-        def.complete(prueba)
+        def.complete(workplace)
     return def.await()
 }
 /**
  * Returns the time of the server
  */
-private suspend fun getServerTime(): TimeModel {
+public suspend fun getServerTime(): TimeModel {
     // Set the URL to the API
     val retrofit = Retrofit.Builder()
         .baseUrl("https://tools.aimylogic.com/api/")
@@ -229,9 +246,9 @@ private suspend fun pathExists(path : String, documentName : String) : Int? {
     }
     return def.await()
 }
-private fun formatDate(timeModel: TimeModel) : String {
+public fun formatDate(timeModel: TimeModel) : String {
     return "${timeModel.day}-${timeModel.month}-${timeModel.year}"
 }
-private fun formatTime(timeModel: TimeModel) : String{
+public fun formatTime(timeModel: TimeModel) : String{
     return "${timeModel.hour}:${timeModel.minute}"
 }

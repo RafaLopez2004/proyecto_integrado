@@ -15,4 +15,6 @@
     <string name="change_password">Change Password</string>
     <string name="history">History of %1$s</string>
     <string name="wait">Wait until the previous operation is completed</string>
+    <string name="cancel">Cancel</string>
+    <string name="email">email</string>
 </resources>

@@ -14,7 +14,7 @@
             android:id="@+id/input"
             android:layout_width="match_parent"
             android:layout_height="30dp"
-            android:hint="email"
+            android:hint="@string/email"
             android:imeOptions="actionDone"
             android:inputType="text"/>
 

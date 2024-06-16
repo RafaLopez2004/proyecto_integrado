@@ -7,6 +7,7 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.location.Location
 import android.os.Bundle
+import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
 import android.widget.ImageButton
@@ -22,9 +23,11 @@ import com.example.prueba.firebase.checkIn
 import com.example.prueba.firebase.checkLocation
 import com.example.prueba.firebase.checkOut
 import com.example.prueba.firebase.forgotPass
+import com.example.prueba.firebase.formatDate
 import com.example.prueba.firebase.getCheckCollection
 import com.example.prueba.firebase.getCurrentUser
 import com.example.prueba.firebase.getCurrentUserName
+import com.example.prueba.firebase.getServerTime
 import com.example.prueba.firebase.logOut
 import com.example.prueba.firebase.setCurrentUserName
 import com.example.prueba.firebase.setCurrentUserDocument
@@ -32,6 +35,7 @@ import com.example.prueba.recycler.DataModel
 import com.example.prueba.recycler.RecyclerAdapter
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
+import com.google.android.material.button.MaterialButton
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -42,7 +46,6 @@ class SecondActivity  : AppCompatActivity(){
 
     private val LOC_CODE = 1000
     private val LOC_CODE_OUT = 1001
-    private var safe : Boolean = true
     private lateinit var fusedLocationClient: FusedLocationProviderClient
     private lateinit var context : Context
     private lateinit var mRecyclerView : RecyclerView
@@ -50,14 +53,14 @@ class SecondActivity  : AppCompatActivity(){
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.prueba)
+        setContentView(R.layout.second_activity)
         setCurrentUserName()
         findViewById<TextView>(R.id.bar_txt).text = String.format(getString(R.string.history), getCurrentUserName())
+        context = this
         val inButton: TextView = findViewById(R.id.checkin)
         val outButton: TextView = findViewById(R.id.checkout)
         val menu: ImageButton = findViewById(R.id.superior_menu)
         var operating = false
-        context = this
 
         CoroutineScope(Dispatchers.IO).launch {
             setCurrentUserDocument()
@@ -106,7 +109,7 @@ class SecondActivity  : AppCompatActivity(){
         // We check if we are in range to be able to to do the check in
         if (location != null && checkLocation(location)) {
             // We try to check in
-            when (checkIn(safe)) {
+            when (checkIn(formatDate(getServerTime()))) {
                 1 ->
                     toastText = "Check in successful"
                 0 ->
@@ -125,7 +128,7 @@ class SecondActivity  : AppCompatActivity(){
         val location = getLocation()
         // We check if we are in range to be able to to do the check out
         if (location != null && checkLocation(location)) {
-            when (checkOut()) {
+            when (checkOut(formatDate(getServerTime()))) {
                 1 ->
                     toastText = "Check out successful"
                 0 ->
@@ -168,9 +171,26 @@ class SecondActivity  : AppCompatActivity(){
             // Respond to menu item click.
             when(menuItem.itemId){
                 R.id.log_out -> {
-                    logOut()
-                    this.startActivity(Intent(this, MainActivity::class.java))
-                    this.finish()
+                    var dialog : AlertDialog? = null
+                    val builder = AlertDialog.Builder(context)
+                    builder.setTitle("Are you sure you want to log out")
+                    val inflatedView = LayoutInflater.from(context)
+                        .inflate(R.layout.log_out_dialog, findViewById(R.id.second), false)
+                    val logOutBtn : MaterialButton = inflatedView.findViewById(R.id.log_out_btn_dialog)
+                    val cancel : MaterialButton = inflatedView.findViewById(R.id.cancel_button)
+
+                    logOutBtn.setOnClickListener {
+                        logOut()
+                        this.startActivity(Intent(this, MainActivity::class.java))
+                        this.finish()
+                    }
+
+                    cancel.setOnClickListener {
+                        dialog?.dismiss()
+                    }
+                    builder.setView(inflatedView)
+                    // We show the dialogue
+                    dialog = builder.show()
                 }
                 R.id.remember_menu -> {
                     var response = ""
